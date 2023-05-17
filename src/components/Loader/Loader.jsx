@@ -4,6 +4,7 @@ import { Audio } from 'react-loader-spinner';
 const Loader = () => {
   return (
     <Audio
+      className="some"
       height="80"
       width="80"
       radius="9"
