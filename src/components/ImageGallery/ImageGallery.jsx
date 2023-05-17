@@ -1,51 +1,51 @@
-import Button from 'components/Button/Button';
+// import Button from 'components/Button/Button';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import { Component } from 'react';
-import fetchImages from '../../api/api';
-import { Audio } from 'react-loader-spinner';
+// import fetchImages from '../../api/api';
+// import { Audio } from 'react-loader-spinner';
 
 class ImageGallery extends Component {
   state = {
-    images: [],
+    // images: [],
     error: '',
     page: 1,
     isLoading: false,
   };
 
-  async componentDidUpdate(prevProps, prevState) {
-    if (prevProps.searchText !== this.props.searchText) {
-      // try {
-      this.setState({ isLoading: true });
-      const { hits } = await fetchImages(this.props.searchText, 1);
-      this.setState({ images: hits, error: null, page: 1, isLoading: false });
-      // } catch (error) {
-      //   this.setState({ error: 'oops... something go wrong try later' });
-      // } finally {
-      //   this.setState({ isLoading: false})
-      // }
-    }
+  // async componentDidUpdate(prevProps, prevState) {
+  //   if (prevProps.searchText !== this.props.searchText) {
+  //     // try {
+  //     this.setState({ isLoading: true });
+  //     const { hits } = await fetchImages(this.props.searchText, 1);
+  //     this.setState({ images: hits, error: null, page: 1, isLoading: false });
+  //     // } catch (error) {
+  //     //   this.setState({ error: 'oops... something go wrong try later' });
+  //     // } finally {
+  //     //   this.setState({ isLoading: false})
+  //     // }
+  //   }
 
-    if (prevState.page !== this.state.page) {
-      // try {
-      const { hits } = await fetchImages(
-        this.props.searchText,
-        this.state.page
-      );
-      this.setState(prevState => ({
-        images: [...prevState.images, ...hits],
-        error: null,
-      }));
-      // } catch (error) {
-      //   this.setState({ error: 'oops... something go wrong try later' });
-      // }
-    }
-  }
+  //   if (prevState.page !== this.state.page) {
+  //     // try {
+  //     const { hits } = await fetchImages(
+  //       this.props.searchText,
+  //       this.state.page
+  //     );
+  //     this.setState(prevState => ({
+  //       images: [...prevState.images, ...hits],
+  //       error: null,
+  //     }));
+  //     // } catch (error) {
+  //     //   this.setState({ error: 'oops... something go wrong try later' });
+  //     // }
+  //   }
+  // }
 
-  loadMoreBtn = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
-  };
+  // loadMoreBtn = () => {
+  //   this.setState(prevState => ({
+  //     page: prevState.page + 1,
+  //   }));
+  // };
 
   // 1 метод без async дивитись api,js
   //       componentDidUpdate(prevProps) {
@@ -55,16 +55,13 @@ class ImageGallery extends Component {
   //   );}
 
   render() {
-    const {
-      images,
-      isLoading,
-      // error
-    } = this.state;
+    const images = this.props.images;
+
     return (
       <>
         {/* {error && <div>{error}</div>} */}
 
-        {isLoading && (
+        {/* {isLoading && (
           <Audio
             height="80"
             width="80"
@@ -74,22 +71,19 @@ class ImageGallery extends Component {
             wrapperStyle
             wrapperClass
           />
-        )}
+        )} */}
 
         {images.length > 0 && (
-          <div>
-            <ul className="gallery">
-              {images.map(image => (
-                <ImageGalleryItem
-                  key={image.pageURL}
-                  pageURL={image.pageURL}
-                  webformatURL={image.webformatURL}
-                  tags={image.tags}
-                />
-              ))}
-            </ul>
-            <Button onClick={this.loadMoreBtn} />
-          </div>
+          <ul className="gallery">
+            {images.map(image => (
+              <ImageGalleryItem
+                key={image.pageURL}
+                pageURL={image.pageURL}
+                webformatURL={image.webformatURL}
+                tags={image.tags}
+              />
+            ))}
+          </ul>
         )}
       </>
     );
