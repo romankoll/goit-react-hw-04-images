@@ -2,21 +2,26 @@ import Button from 'components/Button/Button';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import { Component } from 'react';
 import fetchImages from '../../api/api';
+import { Audio } from 'react-loader-spinner';
 
 class ImageGallery extends Component {
   state = {
     images: [],
-    error: null,
+    error: '',
     page: 1,
+    isLoading: false,
   };
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevProps.searchText !== this.props.searchText) {
       // try {
+      this.setState({ isLoading: true });
       const { hits } = await fetchImages(this.props.searchText, 1);
-      this.setState({ images: hits, error: null, page: 1 });
+      this.setState({ images: hits, error: null, page: 1, isLoading: false });
       // } catch (error) {
       //   this.setState({ error: 'oops... something go wrong try later' });
+      // } finally {
+      //   this.setState({ isLoading: false})
       // }
     }
 
@@ -52,11 +57,25 @@ class ImageGallery extends Component {
   render() {
     const {
       images,
+      isLoading,
       // error
     } = this.state;
     return (
       <>
         {/* {error && <div>{error}</div>} */}
+
+        {isLoading && (
+          <Audio
+            height="80"
+            width="80"
+            radius="9"
+            color="green"
+            ariaLabel="three-dots-loading"
+            wrapperStyle
+            wrapperClass
+          />
+        )}
+
         {images.length > 0 && (
           <div>
             <ul className="gallery">
