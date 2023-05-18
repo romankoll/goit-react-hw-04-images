@@ -18,7 +18,7 @@ const ImageGalleryItem = ({ pageURL, webformatURL, tags, onClick }) => {
 export default ImageGalleryItem;
 
 ImageGalleryItem.propTypes = {
-  image: PropTypes.string,
+  webformatURL: PropTypes.string.isRequired,
   tags: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   pageURL: PropTypes.string.isRequired,
