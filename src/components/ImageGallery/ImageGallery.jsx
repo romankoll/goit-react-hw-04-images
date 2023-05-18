@@ -1,17 +1,10 @@
 // import Button from 'components/Button/Button';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import { Component } from 'react';
-// import fetchImages from '../../api/api';
-// import { Audio } from 'react-loader-spinner';
+import css from './ImageGallery.module.css';
+import PropTypes from 'prop-types';
 
 class ImageGallery extends Component {
-  state = {
-    // images: [],
-    error: '',
-    page: 1,
-    isLoading: false,
-  };
-
   // async componentDidUpdate(prevProps, prevState) {
   //   if (prevProps.searchText !== this.props.searchText) {
   //     // try {
@@ -54,29 +47,19 @@ class ImageGallery extends Component {
   //     this.setState({ images: data.hits })
   //   );}
 
+  onItemClick = image => {
+    this.props.onClick(image);
+  };
   render() {
     const images = this.props.images;
 
     return (
       <>
-        {/* {error && <div>{error}</div>} */}
-
-        {/* {isLoading && (
-          <Audio
-            height="80"
-            width="80"
-            radius="9"
-            color="green"
-            ariaLabel="three-dots-loading"
-            wrapperStyle
-            wrapperClass
-          />
-        )} */}
-
         {images.length > 0 && (
-          <ul className="gallery">
+          <ul className={css.imageGallery}>
             {images.map(image => (
               <ImageGalleryItem
+                onClick={() => this.onItemClick(image)}
                 key={image.pageURL}
                 pageURL={image.pageURL}
                 webformatURL={image.webformatURL}
@@ -89,5 +72,10 @@ class ImageGallery extends Component {
     );
   }
 }
+
+ImageGallery.propTypes = {
+  images: PropTypes.array.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
 
 export default ImageGallery;

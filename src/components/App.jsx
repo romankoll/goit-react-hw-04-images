@@ -5,6 +5,8 @@ import fetchImages from '../api/api';
 import Searchbar from './Searchbar/Searchbar';
 import Button from './Button/Button';
 import Loader from './Loader/Loader';
+import Modal from './Modal/Modal';
+import css from './App.module.css';
 
 class App extends Component {
   state = {
@@ -12,6 +14,8 @@ class App extends Component {
     page: 1,
     images: [],
     isLoading: false,
+    showModal: false,
+    largeImage: {},
   };
 
   async componentDidUpdate(_, prevState) {
@@ -19,21 +23,14 @@ class App extends Component {
       prevState.searchText !== this.state.searchText ||
       prevState.page !== this.state.page
     ) {
-      const { searchText, page, images } = this.state;
+      const { searchText, page } = this.state;
       this.setState({ isLoading: true });
       try {
         await fetchImages(searchText, page).then(data => {
           if (data.hits.length === 0) {
-            this.setState({ isLoading: false, isActive: false });
-            return Promise.reject(
-              new Error(`Nothing found for "${searchText}"`)
-            );
+            this.setState({ isLoading: false });
           }
-          if (images.length + 12 <= data.totalHits) {
-            this.setState({ isActive: true });
-          } else {
-            this.setState({ isActive: false });
-          }
+
           const searchedImages = data.hits;
           this.setState(prevState => ({
             images: [...prevState.images, ...searchedImages],
@@ -41,18 +38,7 @@ class App extends Component {
           }));
         });
       } catch (error) {
-        this.setState({ isLoading: false, error });
-        // toast.error(`${error.message}`, {
-        //   position: 'top-center',
-        //   autoClose: 2000,
-        //   hideProgressBar: false,
-        //   closeOnClick: true,
-        //   pauseOnHover: true,
-        //   draggable: true,
-        //   progress: undefined,
-        //   theme: 'colored',
-        // }
-        // );
+        this.setState({ error });
       }
     }
   }
@@ -66,14 +52,29 @@ class App extends Component {
     this.setState({ searchText, page: 1, images: [] });
   };
 
+  handleOpenModal = image => {
+    const largeImage = { url: image.largeImageURL, alt: image.tags };
+    this.setState({ largeImage, showModal: true });
+  };
+
+  handleCloseModal = () => {
+    this.setState({ showModal: false });
+  };
+
   render() {
-    const { searchText, images, isLoading } = this.state;
+    const { images, isLoading, showModal } = this.state;
     return (
-      <div>
+      <div className={css.app}>
         <Searchbar hendleSearch={this.hendleSearch} />
         {isLoading && <Loader />}
-        <ImageGallery images={images} />
+        <ImageGallery images={images} onClick={this.handleOpenModal} />
         {images.length > 0 && <Button onClick={this.loadMoreBtn} />}
+        {showModal && (
+          <Modal
+            image={this.state.largeImage}
+            onClose={this.handleCloseModal}
+          />
+        )}
       </div>
     );
   }
