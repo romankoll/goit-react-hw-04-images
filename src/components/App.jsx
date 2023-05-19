@@ -16,6 +16,7 @@ class App extends Component {
     isLoading: false,
     showModal: false,
     largeImage: {},
+    isActive: false,
   };
 
   async componentDidUpdate(_, prevState) {
@@ -23,25 +24,31 @@ class App extends Component {
       prevState.searchText !== this.state.searchText ||
       prevState.page !== this.state.page
     ) {
-      const { searchText, page } = this.state;
+      const { searchText, page, images } = this.state;
       this.setState({ isLoading: true });
       try {
-        await fetchImages(searchText, page).then(data => {
-          if (data.hits.length === 0) {
-            this.setState({ isLoading: false });
-          }
+        const data = await fetchImages(searchText, page);
 
-          const searchedImages = data.hits;
-          this.setState(prevState => ({
-            images: [...prevState.images, ...searchedImages],
-            isLoading: false,
-          }));
-        });
+        if (images.length + 12 <= data.totalHits || data.hits.length === 0) {
+          this.setState({ isActive: true });
+        } else {
+          this.setState({ isActive: false });
+        }
+        if (data.hits.length === 0) {
+          this.setState({ isLoading: false });
+        }
+
+        const searchedImages = data.hits;
+        this.setState(prevState => ({
+          images: [...prevState.images, ...searchedImages],
+          isLoading: false,
+        }));
       } catch (error) {
         this.setState({ error });
       }
     }
   }
+
   loadMoreBtn = () => {
     this.setState(prevState => ({
       page: prevState.page + 1,
@@ -62,13 +69,13 @@ class App extends Component {
   };
 
   render() {
-    const { images, isLoading, showModal } = this.state;
+    const { images, isLoading, showModal, isActive } = this.state;
     return (
       <div className={css.app}>
         <Searchbar hendleSearch={this.hendleSearch} />
         {isLoading && <Loader />}
         <ImageGallery images={images} onClick={this.handleOpenModal} />
-        {images.length > 0 && <Button onClick={this.loadMoreBtn} />}
+        {isActive && <Button onClick={this.loadMoreBtn} />}
         {showModal && (
           <Modal
             image={this.state.largeImage}
